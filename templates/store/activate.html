@@ -1,0 +1,11 @@
+{% extends 'product/base.html' %}
+{% load static %}
+{% block body %}
+<div class="details">
+    <div class="detail-grid">
+        <div class="purchase">
+            <p class="product-name">{{ store.name }}</p>
+            <button class = 'add-to-cart' data-product = '{{ product.id }}'>activate store</button>
+        </div>
+    </div>
+{% endblock %}
