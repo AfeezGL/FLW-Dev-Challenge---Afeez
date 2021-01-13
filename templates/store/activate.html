@@ -5,7 +5,9 @@
     <div class="detail-grid">
         <div class="purchase">
             <p class="product-name">{{ store.name }}</p>
-            <button class = 'add-to-cart' data-product = '{{ product.id }}'>activate store</button>
+            {{ store.id }}
+            {{ store.phone_number }}
+            <a href="{% url 'activation_payment_init' %}" class= 'btn-success'>activate store</a>
         </div>
     </div>
 {% endblock %}

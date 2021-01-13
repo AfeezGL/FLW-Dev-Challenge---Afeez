@@ -4,8 +4,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class Store(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=35, default='Jumga Default')
+    name = models.CharField(max_length=100)
     description = models.TextField()
+    email = models.EmailField()
     phone_number = PhoneNumberField()
     bank_name = models.CharField(max_length=200)
     account_number = models.CharField(max_length=10)

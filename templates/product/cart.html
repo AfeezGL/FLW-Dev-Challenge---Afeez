@@ -21,7 +21,7 @@
         {% endfor %}
     </div>
     <h3>Total = <span class="total">{{ order.total }}</span></h3>
-    <a href="#">
+    <a href="{% url 'delivery_info' %}">
         <button class = 'proceed-btn'>Proceed to checkout</button>
     </a>
 </div>

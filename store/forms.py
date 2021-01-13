@@ -10,4 +10,4 @@ class CreateStoreForm(ModelForm):
 class AddProductForm(ModelForm):
     class Meta:
         model = Product
-        fields = ["image", "name", "description", "tags", "category", "tags"]
+        fields = ["image", "name", "description", "tags", "category", "price", "available_units"]

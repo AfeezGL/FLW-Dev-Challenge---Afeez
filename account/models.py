@@ -69,16 +69,3 @@ class Customer(models.Model):
         else:
             name = self.device_id
         return str(name)
-
-class Address(models.Model):
-    customer = models.ForeignKey(Customer, on_delete = models.CASCADE)
-    first_name = models.CharField(max_length = 250, null = True)
-    last_name = models.CharField(max_length = 250, null = True)
-    email = models.EmailField(max_length = 250, null = True, blank = True)
-    address_line_1 = models.CharField(max_length = 250, null = True)
-    address_line_2 = models.CharField(max_length = 250, null = True, blank = True)
-    city = models.CharField(max_length = 250, null = True)
-    state = models.CharField(max_length = 250, null = True)
-    country = models.CharField(max_length = 250, default = "Nigeria")
-    postal_code = models.PositiveIntegerField(null = True)
-    phone_number = PhoneNumberField()

@@ -78,6 +78,7 @@ AUTH_USER_MODEL = 'account.User'
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'
+FLUTTERWAVE_SEC_KEY = os.environ.get('FLUTTERWAVE_SEC_KEY')
 
 WSGI_APPLICATION = 'jumga.wsgi.application'
 

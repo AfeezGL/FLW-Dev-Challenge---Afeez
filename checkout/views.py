@@ -1,14 +1,16 @@
 from django.shortcuts import render, reverse
 from product.models import *
 from account.models import Customer
-from django.http import HttpResponse, JsonResponse
+from .models import Address
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.generic import UpdateView
 import requests
 import json
 import datetime
-import os
+from django.conf import settings
 
-PAYSTACK_API_KEY = os.environ.get('PAYSTACK_API_KEY')
+FLUTTERWAVE_SEC_KEY = settings.FLUTTERWAVE_SEC_KEY
+BASE_URL = "http://127.0.0.1:8000"
 
 class DeliveryInfo(UpdateView):
     template_name = "product/forms.html"
@@ -20,7 +22,10 @@ class DeliveryInfo(UpdateView):
             customer = Customer.objects.get(user = user)
         except:
             customer, created = Customer.objects.get_or_create(device_id = deviceId)
-        return customer
+        order, created = Order.objects.get_or_create(customer = customer, completed = False)
+        address, created = Address.objects.get_or_create(order = order)
+        return address
+    
     fields = ['first_name', 'last_name', 'email', 'address_line_1', 'address_line_2', 'city', 'state', 'country', 'postal_code', 'phone_number']
 
     def get_success_url(self):
@@ -28,7 +33,7 @@ class DeliveryInfo(UpdateView):
 
 
 def CheckoutView(request):
-    template = "checkout.html"
+    template = "product/checkout.html"
     try:
         customer= Customer.objects.get(user = request.user)
     except:
@@ -46,29 +51,67 @@ def CheckoutView(request):
 
 
 def InitializePaymentView(request):
-    data = json.loads(request.body)
-    res = requests.post('https://api.paystack.co/transaction/initialize', json = data, headers = {"Authorization": PAYSTACK_API_KEY})
-    print (res.text)
+    try:
+        customer= Customer.objects.get(user = request.user)
+    except:
+        deviceId = request.COOKIES["deviceId"]
+        customer, created = Customer.objects.get_or_create(device_id = deviceId)
+    order, created = Order.objects.get_or_create(customer = customer, completed = False)
+
+    try:
+        email = request.user.email
+        phone_number = request.user.phone_number
+        name = f"{request.user.first_name} {request.user.last_name}"
+    except:
+        email = order.address.email
+        phone_number = order.address.phone_number
+        name = f"{order.address.first_name} {order.address.last_name}"
+    
+    redirect_url = f"{BASE_URL}{reverse('verify')}"
+
+    data = {
+        "tx_ref": f"{order.transaction_id}",
+        "amount": f"{order.total}",
+        "currency": "NGN",
+        "redirect_url": redirect_url,
+        "payment_options": "card",
+        "meta": {
+            "consumer_id": customer.id,
+            "consumer_email": email,
+            "transaction_type": "cart checkout",
+        },
+        "customer":{
+            "name": name,
+            "email": email,
+            "phone_number": phone_number
+        },
+        "customizations":{
+            "title":"Jumga",
+            "description":"Shopping made easy",
+            "logo":"https://assets.piedpiper.com/logo.png"
+        }
+    }
+    res = requests.post('https://api.flutterwave.com/v3/payments', json = data, headers = {"Authorization": FLUTTERWAVE_SEC_KEY})
     response = res.json()
-    print (response)
-    return JsonResponse(response)
+    link = response["data"]["link"]
+    return HttpResponseRedirect(link)
 
 
-def VerifyPaymentView(request, *args, **kwargs):
-    reference = request.GET['trxref']
-    order = Order.objects.get(transaction_id = reference)
-    #print (reference)
-    url = 'https://api.paystack.co/transaction/verify/'
-    verify_url = url + reference
-    res = requests.get(verify_url, headers={"Authorization": PAYSTACK_API_KEY})
-    response = res.json()
-    if res.ok == True:
-        content = json.loads(res.content)
-        message = content["message"]
-        if message == "Verification successful":
+def VerifyPaymentView(request):
+    tx_ref = request.GET['tx_ref']
+    fl_tx_ref = request.GET['transaction_id']
+    order = Order.objects.get(transaction_id = tx_ref)
+    url = f"https://api.flutterwave.com/v3/transactions/{fl_tx_ref}/verify"
+    res = requests.get(url, headers={"Authorization": FLUTTERWAVE_SEC_KEY})
+    content = json.loads(res.content)
+    message = content["status"]
+
+    if res.ok and message == "success":
+        if order.completed:
+            pass
+        else:
             order.completed = True
             order.save()
     else:
         message = "Operation failed"
-    #print (message)
     return HttpResponse(message)
