@@ -26,7 +26,7 @@ def has_inactive_store(function):
             if not store.is_active:
                 return function(request, *args, **kwargs)
             else:
-                return HttpResponseRedirect(reverse("store_home"))
+                return HttpResponseRedirect(reverse("dashboard"))
         except ObjectDoesNotExist:
             return HttpResponseRedirect(reverse("create_store"))
 

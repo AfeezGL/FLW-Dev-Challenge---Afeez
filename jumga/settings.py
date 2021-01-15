@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'store.apps.StoreConfig',
     'product.apps.ProductConfig',
     'checkout.apps.CheckoutConfig',
+    'dispatch.apps.DispatchConfig',
     'phonenumber_field'
 ]
 

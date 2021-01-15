@@ -2,7 +2,8 @@ from django.shortcuts import render, reverse
 from product.models import *
 from account.models import Customer
 from .models import Address
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from store.models import Store
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.views.generic import UpdateView
 import requests
 import json
@@ -32,14 +33,20 @@ class DeliveryInfo(UpdateView):
         return reverse('checkout')
 
 
-def CheckoutView(request):
+def CheckoutView(request, slug):
     template = "product/checkout.html"
+
+    try:
+        store = Store.objects.get(slug = slug)
+    except:
+        return HttpResponseNotFound("page not found")
+
     try:
         customer= Customer.objects.get(user = request.user)
     except:
         deviceId = request.COOKIES["deviceId"]
         customer, created = Customer.objects.get_or_create(device_id = deviceId)
-    order, created = Order.objects.get_or_create(customer = customer, completed = False)
+    order, created = Order.objects.get_or_create(customer = customer, store = store, completed = False)
     string = str(datetime.datetime.now().timestamp())
     order.transaction_id = string
     order.save()
@@ -50,13 +57,18 @@ def CheckoutView(request):
     "cartitems":cartitems})
 
 
-def InitializePaymentView(request):
+def InitializePaymentView(request, slug):
+    try:
+        store = Store.objects.get(slug = slug)
+    except:
+        return HttpResponseNotFound("page not found")
+
     try:
         customer= Customer.objects.get(user = request.user)
     except:
         deviceId = request.COOKIES["deviceId"]
         customer, created = Customer.objects.get_or_create(device_id = deviceId)
-    order, created = Order.objects.get_or_create(customer = customer, completed = False)
+    order, created = Order.objects.get_or_create(customer = customer, store = store, completed = False)
 
     try:
         email = request.user.email

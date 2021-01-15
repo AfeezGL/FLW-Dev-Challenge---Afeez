@@ -1,8 +1,10 @@
 from django.shortcuts import render, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Store
-from django.http import HttpResponseRedirect, JsonResponse
+from .models import Store, Order
+from account.models import Customer
+from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponseNotFound
 from django.views.generic.edit import CreateView, UpdateView
 from .forms import CreateStoreForm, AddProductForm
 from .mixins import HasStoreMixin
@@ -15,9 +17,49 @@ from django.conf import settings
 FLUTTERWAVE_SEC_KEY = settings.FLUTTERWAVE_SEC_KEY
 BASE_URL = "http://127.0.0.1:8000"
 
+def product_list(request, slug):
+    try:
+        store = Store.objects.get(slug=slug)
+    except:
+        return HttpResponseNotFound("page not found")
+
+    template = "product/index.html"
+    product_list = store.product_set.all().order_by("-date_updated")
+    paginator = Paginator(product_list, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        "store": store,
+        "object_list": page_obj
+    }
+    return render(request, template, context)
+
+
+def CartView(request, slug):
+    try:
+        store = Store.objects.get(slug=slug)
+    except:
+        return HttpResponseNotFound("page not found")
+    
+    try:
+        customer = Customer.objects.get(user = request.user)
+    except:
+        try:
+            device_id = request.COOKIES["deviceId"]
+        except:
+            device_id = "empty"
+        customer, created = Customer.objects.get_or_create(device_id = device_id)
+    order, created = Order.objects.get_or_create(customer = customer, store = store, completed = False)
+    cartitems = order.cartitem_set.all()
+    template = "product/cart.html"
+    return render(request, template, {"order":order,
+    "cartitems":cartitems})
+
+
+
 @login_required
 @has_store
-def store_home(request):
+def dashboard(request):
     store = request.user.store
     template = "store/index.html"
     product_list = store.product_set.all().order_by("-date_updated")
@@ -35,7 +77,7 @@ class CreateStore(LoginRequiredMixin, CreateView):
         store = form.save(commit=False)
         store.user = self.request.user
         store.save()
-        return HttpResponseRedirect(reverse("store_home"))
+        return HttpResponseRedirect(reverse("dashboard"))
 
 @login_required
 @has_inactive_store
@@ -104,7 +146,7 @@ def verify_payment(request):
             store = Store.objects.get(id=pk)
             store.is_active = True
             store.save()
-            return HttpResponseRedirect(reverse('store_home'))
+            return HttpResponseRedirect(reverse('dashboard'))
     else:
         return JsonResponse(message, safe=False)
 

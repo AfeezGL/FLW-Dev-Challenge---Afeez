@@ -1,16 +1,11 @@
+from store.models import Store, Order
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
-from .models import Product, CartItem, Order
+from .models import Product, CartItem
 from account.models import User, Customer
 from django.http import HttpResponse, JsonResponse
 import json
 
-
-class ProductList(ListView):
-    model = Product
-    queryset = Product.objects.all().order_by("-date_updated")
-    paginate_by = 9
-    template_name = "product/index.html"
 
 class ProductShowcase(DetailView):
     model = Product
@@ -21,12 +16,14 @@ def add_to_cart(request):
 	data = json.loads(request.body)
 	product_id = data["productId"]
 	device_id = data["deviceId"]
+	store_id = data["storeId"]
 	product = Product.objects.get(id = product_id)
+	store = Store.objects.get(id = store_id)
 	if request.user.is_authenticated:
 		customer = Customer.objects.get(user = request.user)
 	else:
 		customer, created = Customer.objects.get_or_create(device_id = device_id)
-	order, created = Order.objects.get_or_create(customer = customer, completed = False)
+	order, created = Order.objects.get_or_create(customer = customer, store = store, completed = False)
 	cartitem, created = CartItem.objects.get_or_create(product = product, customer = customer, order = order)
 	cartitem.units = (cartitem.units + 1)
 	cartitem.save()
@@ -40,29 +37,17 @@ def add_to_cart(request):
 	return JsonResponse(res, safe=False)
 
 #Cart View. Shows all cart items and total
-def CartView(request):
-    template = "product/cart.html"
-    try:
-        customer = Customer.objects.get(user = request.user)
-    except:
-        try:
-            device_id = request.COOKIES["deviceId"]
-        except:
-            device_id = "empty"
-        customer, created = Customer.objects.get_or_create(device_id = device_id)
-    order, created = Order.objects.get_or_create(customer = customer, completed = False)
-    cartitems = order.cartitem_set.all()
-    return render(request, template, {"order":order,
-    "cartitems":cartitems})
 
 def RefreshNum(request):
 	data = json.loads(request.body)
 	device_id = data["deviceId"]
+	store_id = data["storeId"]
+	store = Store.objects.get(id = store_id)
 	try:
 		customer = Customer.objects.get(user = request.user)
 	except:
 		customer, created = Customer.objects.get_or_create(device_id = device_id)
-	order, created = Order.objects.get_or_create(customer = customer, completed = False)
+	order, created = Order.objects.get_or_create(customer = customer, store = store, completed = False)
 	print(order)
 	cartitems = order.cartitem_set.all()
 	num = 0

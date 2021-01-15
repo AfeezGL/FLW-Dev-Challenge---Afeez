@@ -1,8 +1,10 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.store_home, name="store_home"),
+    path('<slug>/products/', views.product_list, name="product_list"),
+    path('<slug>/cart/', views.CartView, name = "cart" ),
+    path('dashboard', views.dashboard, name="dashboard"),
     path('create/', views.CreateStore.as_view(), name="create_store"),
     path('activate/', views.ActivateStore, name="activate_store"),
     path('initialize_payment', views.InitializePayment, name="activation_payment_init"),

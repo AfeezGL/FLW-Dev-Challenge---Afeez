@@ -40,4 +40,16 @@
     </ul>
     {% endif %}
 </div>
+<div class="cart-link">
+    <a href="{% url 'cart' store.slug %}">
+        <div class="cart-icon" style="background-image: url('{% static 'css/supermarket.svg' %}');">
+            <div class="carttext">
+                <h2 class="num"></h2>
+            </div>
+        </div>
+    </a>
+</div>
+<script>
+    var store_id = {{ store.id }}
+</script>
 {% endblock %}
