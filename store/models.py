@@ -46,7 +46,7 @@ class Order(models.Model):
 		return self.customer.__str__() + str(self.id)
 	
 	@property
-	def total(self):
+	def cart_total(self):
 		total = 0
 		for cartitem in self.cartitem_set.all():
 			total += cartitem.get_price()

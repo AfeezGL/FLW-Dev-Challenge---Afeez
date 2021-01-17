@@ -20,9 +20,9 @@
         </div>
         {% endfor %}
     </div>
-    <h3>Total = <span class="total">{{ order.total }}</span></h3>
-    <a href="{% url 'delivery_info' %}">
+    <h3>Total = <span class="total">{{ order.cart_total }}</span></h3>
+    <a href="{% url 'delivery_info' order.store.slug %}">
         <button class = 'proceed-btn'>Proceed to checkout</button>
     </a>
 </div>
-{% endblock %}
+{% endblock %} 

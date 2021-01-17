@@ -1,13 +1,14 @@
 from django.shortcuts import render, reverse
 from product.models import *
 from account.models import Customer
-from .models import Address
+from .models import Address, OrderDetails
 from store.models import Store
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.views.generic import UpdateView
 import requests
 import json
 import datetime
+import random
 from django.conf import settings
 
 FLUTTERWAVE_SEC_KEY = settings.FLUTTERWAVE_SEC_KEY
@@ -54,10 +55,23 @@ def CheckoutView(request, slug):
         deviceId = request.COOKIES["deviceId"]
         customer, created = Customer.objects.get_or_create(device_id = deviceId)
     order, created = Order.objects.get_or_create(customer = customer, store = store, completed = False)
+
+    # Generate transaction id
     string = str(datetime.datetime.now().timestamp())
     order.transaction_id = string
+
+    # Generate shipping fee
+    number = random.randint(800, 1200)
+    order.shipping_fee = number
     order.save()
 
+    # Generate Order Details
+    details, created = OrderDetails.objects.get_or_create(order = order)
+    details.cart_total = int(order.cart_total)
+    details.shipping_total = int(order.shipping_fee)
+    details.save()
+
+    # Get cart items
     cartitems = order.cartitem_set.all()
     return render(request, template, {"order":order,
     "cartitems":cartitems})

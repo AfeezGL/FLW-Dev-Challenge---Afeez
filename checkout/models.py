@@ -16,10 +16,26 @@ class Address(models.Model):
     phone_number = PhoneNumberField()
 
 class OrderDetails(models.Model):
-    order = models.OneToOneField(Order, null=True, on_delete=models.SET_NULL)
-    amount_total = models.IntegerField()
-    shop_total = models.IntegerField()
-    commission = models.IntegerField()
-    shipping_total= models.IntegerField()
-    rider_total = models.IntegerField()
-    shipping_commission = models.IntegerField()
+    order = models.OneToOneField(Order, null=True, on_delete=models.SET_NULL, related_name="details")
+    cart_total = models.IntegerField(default=0)
+    shipping_total= models.IntegerField(default=0)
+
+    @property
+    def commission(self):
+        return self.cart_total * 0.075
+
+    @property
+    def store_total(self):
+        return self.cart_total - self.commission
+
+    @property
+    def shipping_commission(self):
+        return self.shipping_total * 0.2
+    
+    @property
+    def rider_total(self):
+        return self.shipping_total - self.shipping_commission
+    
+    @property
+    def net_total(self):
+        return self.cart_total + self.shipping_total

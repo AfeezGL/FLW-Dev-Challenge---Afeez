@@ -28,7 +28,7 @@ def add_to_cart(request):
 	cartitem.units = (cartitem.units + 1)
 	cartitem.save()
 	units = cartitem.units
-	total = order.total
+	total = order.cart_total
 	res = {
 		"total":total,
 		"units":units
