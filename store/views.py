@@ -1,8 +1,8 @@
 from django.shortcuts import render, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.detail import DetailView
 from .models import Store, Order
+from product.models import Product
 from account.models import Customer
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, JsonResponse, HttpResponseNotFound
@@ -141,6 +141,14 @@ class CreateProduct(LoginRequiredMixin, HasStoreMixin, CreateView):
         product.store_id = self.request.user.store.id
         product.save()
         return HttpResponseRedirect(reverse("add_product"))
+
+
+class UpdateProduct(UpdateView):
+    model = Product
+    template_name = "product/forms.html"
+
+    def get_success_url(self):
+        return reverse("dashboard")
 
 
 def PendingOrders(request):

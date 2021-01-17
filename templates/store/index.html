@@ -16,11 +16,11 @@
 			<img src="{{ product.image.url }}" alt="">
 			<span>{{ product.name }}</span>
 			<a href="{% url 'details' product.id %}"><button>View</button></a>
-			<a href=""><button>edit</button></a>
+			<a href="{% url 'update_product' product.id %}"><button>edit</button></a>
 		</div>
 		{% endfor %}
 		<a href="">More...</a>
-		<a href="{% url 'add_product' %}"><button>Add Product</button></a>
+		<a href="{% url 'create_product' %}"><button>Add Product</button></a>
 	</div>
 	
 {% endblock %}
