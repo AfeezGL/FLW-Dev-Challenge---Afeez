@@ -146,6 +146,7 @@ class CreateProduct(LoginRequiredMixin, HasStoreMixin, CreateView):
 class UpdateProduct(UpdateView):
     model = Product
     template_name = "product/forms.html"
+    fields = ["image", "name", "description", "tags", "category", "price", "available_units"]
 
     def get_success_url(self):
         return reverse("dashboard")
