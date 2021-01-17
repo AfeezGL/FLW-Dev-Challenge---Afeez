@@ -273,17 +273,13 @@ a p {
 	padding: .3rem;
 }
 .btn-success {
-	width: 300px;
 	font-size: 1.1em;
 	background-color: #d4af37;
 	color: white;
 	border: 0;
 	border-radius: 1em;
-	padding-top: 10px;
-	padding-bottom: 10px;
+	padding: 10px;
 	margin-top: 1rem;
-	margin-right: 0;
-	margin-left: auto;
 	transition: background-color 0.6s ease-in-out;
 }
 .btn-success:hover {

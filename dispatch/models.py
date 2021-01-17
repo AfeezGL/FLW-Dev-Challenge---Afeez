@@ -9,4 +9,4 @@ class DispatchRider(models.Model):
     phone_number = PhoneNumberField()
     bank = CharField(max_length=50)
     account_number = models.IntegerField()
-    balance = models.IntegerField()
+    balance = models.IntegerField(blank=True, default=0)

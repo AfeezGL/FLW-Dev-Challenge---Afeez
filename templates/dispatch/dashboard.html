@@ -9,7 +9,8 @@
 	</div>
 	{% for order in deliveries %}
 		<h2>{{ order.reference }}</h2>
-		<a href="{% url 'task_detail' order.id %}">Details</a>
+        <a href="{% url 'task_details' order.id %}">Details</a>
+        <a href="{% url 'task_update' order.id %}">Update</a>
 	{% endfor %}
 	
 {% endblock %}

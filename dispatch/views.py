@@ -16,6 +16,7 @@ class IndexView(TemplateView):
 
 class RegisterView(LoginRequiredMixin, CreateView):
     model = DispatchRider
+    form_class = RiderForm
     template_name = "product/forms.html"
 
     def form_valid(self, form):
@@ -48,6 +49,14 @@ def DashboardView(request):
     context = {"deliveries": deliveries, "lenght": length}
     return render(request, template, context)
 
-class TaskDetailView(DetailView):
+class TaskDetailsView(DetailView):
     model = Order
-    template_name = "dispatch/taskDetail.html"
+    template_name = "dispatch/taskDetails.html"
+
+class TaskUpdateView(UpdateView):
+    model = Order
+    fields = ["status"]
+    template_name = "dispatch/taskUpdate.html"
+
+    def get_success_url(self):
+        return reverse('task_details', kwargs={'pk': self.object.id})
