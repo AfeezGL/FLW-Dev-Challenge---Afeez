@@ -14,6 +14,6 @@
         {% endfor %}
     </div>
     <h3>Total = <span>{{ order.total }}</span></h3>
-    <a href="{% url 'payment_init' %}" class="proceed-btn">Pay</a>
+    <a href="{% url 'payment_init' order.store.slug %}" class="proceed-btn">Pay</a>
 </div>
 {% endblock %}

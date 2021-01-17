@@ -11,7 +11,7 @@ import datetime
 from django.conf import settings
 
 FLUTTERWAVE_SEC_KEY = settings.FLUTTERWAVE_SEC_KEY
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = settings.BASE_URL
 
 class DeliveryInfo(UpdateView):
     template_name = "product/forms.html"
@@ -19,18 +19,25 @@ class DeliveryInfo(UpdateView):
     def get_object(self):
         user = self.request.user
         deviceId = self.request.COOKIES["deviceId"]
+        slug = self.kwargs["slug"]
+        try:
+            store = Store.objects.get(slug = slug)
+        except:
+            return HttpResponseNotFound("page not found")
+
         try:
             customer = Customer.objects.get(user = user)
         except:
             customer, created = Customer.objects.get_or_create(device_id = deviceId)
-        order, created = Order.objects.get_or_create(customer = customer, completed = False)
+        order, created = Order.objects.get_or_create(customer = customer, store = store, completed = False)
         address, created = Address.objects.get_or_create(order = order)
         return address
     
     fields = ['first_name', 'last_name', 'email', 'address_line_1', 'address_line_2', 'city', 'state', 'country', 'postal_code', 'phone_number']
 
     def get_success_url(self):
-        return reverse('checkout')
+        slug = self.kwargs["slug"]
+        return reverse('checkout', kwargs = {"slug": slug})
 
 
 def CheckoutView(request, slug):
@@ -51,7 +58,6 @@ def CheckoutView(request, slug):
     order.transaction_id = string
     order.save()
 
-    print(order.transaction_id)
     cartitems = order.cartitem_set.all()
     return render(request, template, {"order":order,
     "cartitems":cartitems})

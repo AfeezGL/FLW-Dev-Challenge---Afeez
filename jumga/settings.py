@@ -80,6 +80,7 @@ LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'
 FLUTTERWAVE_SEC_KEY = os.environ.get('FLUTTERWAVE_SEC_KEY')
+BASE_URL = "http://127.0.0.1:8000"
 
 WSGI_APPLICATION = 'jumga.wsgi.application'
 

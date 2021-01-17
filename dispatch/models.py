@@ -1,9 +1,12 @@
+from django.db.models.fields import CharField
 import store
 from django.db import models
 from account.models import User
-from store.models import Store
+from phonenumber_field.modelfields import PhoneNumberField
 
 class DispatchRider(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    store = models.OneToOneField(Store, on_delete= models.SET_NULL, null=True)
+    phone_number = PhoneNumberField()
+    bank = CharField(max_length=50)
+    account_number = models.IntegerField()
     balance = models.IntegerField()

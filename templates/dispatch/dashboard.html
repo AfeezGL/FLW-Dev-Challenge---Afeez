@@ -1,0 +1,15 @@
+{% extends 'product/base.html' %}
+{% block body %}
+	<div class="notifications">
+		<div class="order-notification">
+            <p>Current Tasks:</p>
+			<hr>
+			<h1>{{ length }}</h1>
+		</div>
+	</div>
+	{% for order in deliveries %}
+		<h2>{{ order.reference }}</h2>
+		<a href="{% url 'task_detail' order.id %}">Details</a>
+	{% endfor %}
+	
+{% endblock %}

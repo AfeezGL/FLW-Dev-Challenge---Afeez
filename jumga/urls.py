@@ -5,9 +5,10 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("product.urls")),
+    path('product/', include("product.urls")),
     path('checkout/', include("checkout.urls")),
     path('account/', include("account.urls")),
-    path('store/', include("store.urls"))
+    path('store/', include("store.urls")),
+    path('dispatch/rider/', include("dispatch.urls"))
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

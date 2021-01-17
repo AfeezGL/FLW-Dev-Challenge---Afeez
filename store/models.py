@@ -1,3 +1,4 @@
+from dispatch.models import DispatchRider
 from django.db import models
 from account.models import User, Customer
 from autoslug import AutoSlugField
@@ -23,7 +24,6 @@ class Store(models.Model):
 class Order(models.Model):
 
 	class StatusChoices(models.TextChoices):
-		SORTING = 'SR', _('Sorting')
 		SHIPMENT = 'SH', _('Shipping')
 		DELIVERED = 'DE', _('Delivered')
 
@@ -31,7 +31,8 @@ class Order(models.Model):
 	store = models.ForeignKey(Store, on_delete=models.CASCADE)
 	completed = models.BooleanField(default = False, null = True, blank = True)
 	transaction_id = models.CharField(max_length = 200, null = True, blank = True)
-	status = models.CharField(max_length = 2, choices = StatusChoices.choices, default=StatusChoices.SORTING)
+	status = models.CharField(max_length = 2, choices = StatusChoices.choices, null=True)
+	dispatch_rider = models.ForeignKey(DispatchRider, null=True, on_delete=models.SET_NULL)
 
 	@property
 	def reference(self):

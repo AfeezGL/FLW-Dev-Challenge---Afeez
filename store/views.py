@@ -15,7 +15,7 @@ import requests
 from django.conf import settings
 
 FLUTTERWAVE_SEC_KEY = settings.FLUTTERWAVE_SEC_KEY
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = settings.BASE_URL
 
 def product_list(request, slug):
     try:
