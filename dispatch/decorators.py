@@ -7,6 +7,7 @@ def is_rider(function):
     def wrap(request, *args, **kwargs):
         try:
             rider = request.user.dispatch_rider
+            return function(request, *args, **kwargs)
         except ObjectDoesNotExist:
             return HttpResponseRedirect(reverse("rider_register"))
 
