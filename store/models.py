@@ -37,6 +37,7 @@ class Order(models.Model):
 	store = models.ForeignKey(Store, on_delete=models.CASCADE)
 	completed = models.BooleanField(default = False, null = True, blank = True)
 	transaction_id = models.CharField(max_length = 200, null = True, blank = True)
+	shipping_fee = models.IntegerField(default=0)
 	status = models.CharField(max_length = 2, choices = StatusChoices.choices, default=StatusChoices.PENDING)
 	dispatch_rider = models.ForeignKey(DispatchRider, null=True, on_delete=models.SET_NULL)
 

@@ -14,3 +14,12 @@ class Address(models.Model):
     country = models.CharField(max_length = 250, default = "Nigeria")
     postal_code = models.PositiveIntegerField(null = True)
     phone_number = PhoneNumberField()
+
+class OrderDetails(models.Model):
+    order = models.OneToOneField(Order, null=True, on_delete=models.SET_NULL)
+    amount_total = models.IntegerField()
+    shop_total = models.IntegerField()
+    commission = models.IntegerField()
+    shipping_total= models.IntegerField()
+    rider_total = models.IntegerField()
+    shipping_commission = models.IntegerField()
