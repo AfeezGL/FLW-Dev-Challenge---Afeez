@@ -30,7 +30,7 @@ def AdminView(request):
     template = "dispatch/admin.html"
     tasks = []
     for order in orders:
-        if order.status != "SH":
+        if order.status != "DE":
             tasks.append(order)
     context = {"tasks": tasks}
     return render(request, template, context)
@@ -43,11 +43,20 @@ def DashboardView(request):
     orders = Order.objects.filter(completed=True, dispatch_rider=rider)
     deliveries = []
     for order in orders:
-        if order.status == "SH":
+        if order.status != "DE":
             deliveries.append(order)
-    length = str(len(deliveries))
-    context = {"deliveries": deliveries, "lenght": length}
+    print(deliveries)
+    length = len(deliveries)
+    context = {"deliveries": deliveries, "length": length}
     return render(request, template, context)
+
+class AssignTask(UpdateView):
+    model = Order
+    fields = ["status", "dispatch_rider"]
+    template_name = "dispatch/assignTask.html"
+
+    def get_success_url(self):
+        return reverse('dispatch_admin')
 
 class TaskDetailsView(DetailView):
     model = Order

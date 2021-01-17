@@ -24,6 +24,7 @@ class Store(models.Model):
 class Order(models.Model):
 
 	class StatusChoices(models.TextChoices):
+		SORTING = 'SR', _('Sorting')
 		SHIPMENT = 'SH', _('Shipping')
 		DELIVERED = 'DE', _('Delivered')
 

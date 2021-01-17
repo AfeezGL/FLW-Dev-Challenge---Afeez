@@ -1,16 +1,19 @@
 {% extends 'product/base.html' %}
 {% block body %}
-	<div class="notifications">
-		<div class="order-notification">
+    <div class="notifications">
+        <div class="order-notification">
             <p>Current Tasks:</p>
-			<hr>
-			<h1>{{ length }}</h1>
-		</div>
-	</div>
-	{% for order in deliveries %}
-		<h2>{{ order.reference }}</h2>
-        <a href="{% url 'task_details' order.id %}">Details</a>
-        <a href="{% url 'task_update' order.id %}">Update</a>
-	{% endfor %}
-	
+            <hr>
+            <h1>{{ length }}</h1>
+        </div>
+    </div>
+    {% if length > 0 %}
+        {% for order in deliveries %}
+            <h2>{{ order.reference }}</h2>
+            <a href="{% url 'task_details' order.id %}">Details</a>
+            <a href="{% url 'task_update' order.id %}">Update</a>
+        {% endfor %}
+    {% else %}
+        <h4>You do not have any active deliveries</h4>
+    {% endif %}
 {% endblock %}

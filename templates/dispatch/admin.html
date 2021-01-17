@@ -1,0 +1,7 @@
+{% extends 'product/base.html' %}
+{% block body %}
+    {% for order in tasks %}
+        <h2>{{ order.reference }}</h2>
+        <a href="{% url 'assign_task' order.id %}">Assign task</a>
+    {% endfor %}
+{% endblock %}
