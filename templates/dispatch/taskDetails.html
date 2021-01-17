@@ -1,12 +1,27 @@
 {% extends 'product/base.html' %}
 {% block body %}
-    <h3>Order Status</h3>
+    <p><h3>Order reference: </h3> {{ order.reference }}</p>
+    <h3>Store Address:</h3>
+    <address>
+        {{ order.store.address_line_1 }},
+        {% if order.store.address_line_2 %}
+            {{ order.store.address_line_2 }},
+        {% endif %}
+        {{ order.store.city }},
+        {{ order.store.state }}
+    </address>
+
+    <h3>Delivery Address</h3>
+    <address>
+        {{ order.address.address_line_1 }},
+        {% if order.address.address_line_2 %}
+            {{ order.address.address_line_2 }},
+        {% endif %}
+        {{ order.address.city }},
+        {{ order.address.state }}.
+        {{ order.address.phone_number }}
+    </address>
+
+    <h3>Order Status:</h3>
     <p>{{ order.status }}</p>
-	<div class="cart-items">
-        <h4>cart-items</h4>
-        {% for cartitem in order.cartitem_set.all %}
-		<h5>{{ cartitem.product.name }}</h5>
-		<span>{{ cartitem.units }} units</span>
-        {% endfor %}
-    </div>
 {% endblock %}

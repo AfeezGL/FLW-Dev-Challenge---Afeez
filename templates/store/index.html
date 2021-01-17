@@ -2,7 +2,11 @@
 {% block body %}
 	<div class="notifications">
 		<div class="order-notification">
-		
+			<a href="{% url 'pending_orders' %}">
+				<p>New Orders:</p>
+				<hr>
+				<h1>{{ length }}</h1>
+			</a>
 		</div>
 	</div>
 	<div class="product-table">

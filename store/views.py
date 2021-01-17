@@ -1,6 +1,7 @@
 from django.shortcuts import render, reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.detail import DetailView
 from .models import Store, Order
 from account.models import Customer
 from django.core.paginator import Paginator
@@ -63,11 +64,44 @@ def dashboard(request):
     store = request.user.store
     template = "store/index.html"
     product_list = store.product_set.all().order_by("-date_updated")
+    orders = Order.objects.filter(store=store, completed=True)
+    deliveries = []
+    for order in orders:
+        if order.status != "DE":
+            deliveries.append(order)
+    length = len(deliveries)
     context = {
         "store": store,
-        "product_list": product_list
+        "product_list": product_list,
+        "length": length
+
     }
     return render(request, template, context)
+
+
+def PendingOrders(request):
+    store = request.user.store
+    template = "store/pendingOrders.html"
+    orders = Order.objects.filter(store=store, completed=True)
+    pending_orders = []
+    for order in orders:
+        if order.status != "DE":
+            pending_orders.append(order)
+    context = {
+        "store": store,
+        "pending_orders": pending_orders
+    }
+    return render(request, template, context)
+
+
+class OrderDetails(UpdateView):
+    model = Order
+    template_name = "store/orderDetails.html"
+    fields = ["status"]
+
+    def get_success_url(self):
+        return reverse("order_details", kwargs={"pk": self.object.id})
+
   
 class CreateStore(LoginRequiredMixin, CreateView):
     form_class = CreateStoreForm
