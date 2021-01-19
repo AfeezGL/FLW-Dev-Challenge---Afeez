@@ -1,4 +1,3 @@
-from dispatch.models import DispatchRider
 from django.db import models
 from account.models import User, Customer
 from autoslug import AutoSlugField
@@ -32,6 +31,7 @@ class Store(models.Model):
 	currency = models.CharField(max_length=3, choices=CurrencyChoices.choices, default=CurrencyChoices.NIGEIRA)
 	balance = models.IntegerField(default=0)
 	is_active = models.BooleanField(default=False)
+	has_rider = models.BooleanField(default=False)
 	slug = AutoSlugField(populate_from='name')
 
 	def __str__(self):
@@ -53,7 +53,7 @@ class Order(models.Model):
 	transaction_id = models.CharField(max_length = 200, null = True, blank = True)
 	shipping_fee = models.IntegerField(default=0)
 	status = models.CharField(max_length = 2, choices = StatusChoices.choices, default=StatusChoices.PENDING)
-	dispatch_rider = models.ForeignKey(DispatchRider, null=True, on_delete=models.SET_NULL)
+	signed = models.BooleanField(default=False)
 
 	@property
 	def reference(self):
@@ -68,4 +68,4 @@ class Order(models.Model):
 
 	def __str__(self):
 		return self.customer.__str__()
-		
+

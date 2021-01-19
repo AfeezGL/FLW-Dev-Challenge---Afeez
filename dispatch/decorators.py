@@ -1,12 +1,13 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.core.exceptions import ObjectDoesNotExist
+from .models import DispatchRider
 
 
 def is_rider(function):
     def wrap(request, *args, **kwargs):
         try:
-            rider = request.user.dispatch_rider
+            rider = DispatchRider.objects.get(user=request.user)
             return function(request, *args, **kwargs)
         except ObjectDoesNotExist:
             return HttpResponseRedirect(reverse("rider_register"))

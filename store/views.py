@@ -252,7 +252,6 @@ def Withdraw(request):
                 "currency": store.currency
             }
             return render(request, template, context)
-        return HttpResponseRedirect(reverse("withdraw_others", kwargs={"currenccy": store.currency}))
 
 def branched(request):
     store = request.user.store
