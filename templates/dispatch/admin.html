@@ -1,7 +1,9 @@
 {% extends 'product/base.html' %}
 {% block body %}
+<div class="details">
     {% for rider in riders %}
         <h2>{{ rider.user.first_name }} {{ rider.user.last_name }}</h2>
-        <a href="{% url 'assign_store' rider.id %}">Assign store</a>
+        <a href="{% url 'assign_store' rider.id %}" class="proceed-btn">Assign store</a>
     {% endfor %}
+</div>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'product/base.html' %}
 {% block body %}
+<div class="details">
 	<form method="post">
 		{% csrf_token %}
 		<label for="store_id">Select a store for {{ rider.user.first_name }} {{ rider.user.last_name }}</label>
@@ -8,6 +9,7 @@
 			<option value="{{ store.id }}">{{ store.name }}</option>
 			{% endfor %}
 		</select>
-		<button class="btn btn-success" type="submit">Update Status</button>
+		<button class="proceed-btn" type="submit">Update Status</button>
 	</form>
+</div>
 {% endblock %}

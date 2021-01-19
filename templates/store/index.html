@@ -1,7 +1,9 @@
 {% extends 'product/base.html' %}
 {% block body %}
+<div class="details">
 	<div class="notifications">
-		<p>balance = {{ store.currency }} {{ store.balance }}</p>
+		<p>Balance = {{ store.currency }} {{ store.balance }}</p>
+		<a href="{% url 'withdraw' %}" class="proceed-btn">Withdraw funds</a>
 		<a href="{% url 'product_list' store.slug %}">View store</a>
 		<div class="order-notification">
 			<a href="{% url 'pending_orders' %}">
@@ -24,5 +26,5 @@
 		<a href="">More...</a>
 		<a href="{% url 'create_product' %}"><button>Add Product</button></a>
 	</div>
-	
+</div>
 {% endblock %}

@@ -10,6 +10,8 @@ from django.views.generic.edit import CreateView, UpdateView
 from .models import DispatchRider
 from store.models import Order, Store
 from .forms import RiderForm
+from jumga.withdrawals import Withdraw
+from datetime import datetime
 
 
 class IndexView(TemplateView):
@@ -119,131 +121,75 @@ class TaskUpdateView(UpdateView):
     def get_success_url(self):
         return reverse('task_details', kwargs={'pk': self.object.id})
 
-def Withdraw(request):
-    store = request.user.store
+def withdrawal(request):
+    user = request.user
+    model = request.user.dispatchrider
+    currency = model.store.currency
+    app = "dispatch"
     timestamp = int(datetime.now().timestamp())
+    reference = f"rider-{user.first_name}-{user.last_name}-withdrawal-{timestamp}"
+    withdrawal_request = Withdraw(request, model, app, currency)
+    # WHEN WITHDRAWAL FORM GETS SUBMITTED
     if request.method == "POST":
         bank = request.POST.get("bank")
         account_number = request.POST.get("account_number")
         x = request.POST.get("amount")
         amount = int(x)
+        withdrawal_request = Withdraw(request, model, app, currency, bank=bank, account_number=account_number, amount=amount, reference=reference)
+        # IF BENEFICIARY'S CURRENCY IS GHS
+        if currency == "GHS":
+            return withdrawal_request.get_branches(run=True)
         
-        if store.currency == "GHS":
-            url = f"https://api.flutterwave.com/v3/banks/{bank}/branches"
-            res = requests.get(url, headers = {"Authorization": FLUTTERWAVE_SEC_KEY})
-            response = json.loads(res.content)
-            print(response)
-            branch_choices = response["data"]
-            context = {
-                "branch_choices": branch_choices,
-                "amount": amount,
-                "bank": bank,
-                "account_number": account_number
-            }
-            template = "store/withdrawOthers.html"
-            return render(request, template, context)
+        # IF THE CURRENCY IS NGN OR KES, PROCEED WITH WITHDRAWAL REQUEST
+        return withdrawal_request.ngn_or_kes(run=True)
+    
+    # ON THEIR FIRST ATTEMPT OF WITHDRAWAL
+    # IF THE CURRENCY IS POUNDS, REDIRECT THEM TO THE UK WITHDRAWAL VIEW
+    if currency == "GBP":
+        return HttpResponseRedirect(reverse("dispatch_withdraw_uk"))
+    
+    # IF IT ISN'T, SEND THEM WITHDRAWAL FORM
+    return withdrawal_request.send_withdrawal_form(run=True)
 
-        data = {
-            "account_bank": bank,
-            "account_number": account_number,
-            "amount": amount,
-            "narration": "jumga store withdrawal",
-            "currency": store.currency,
-            "reference": f"{store.name}-withdrawal-{timestamp}",
-            "callback_url": "https://hooks.zapier.com/hooks/catch/9319455/o0es6km",
-            "debit_currency": store.currency
-        }
-        res = requests.post("https://api.flutterwave.com/v3/transfers", json=data, headers={"Authorization": FLUTTERWAVE_SEC_KEY})
-        response = json.loads(res.content)
-        if response["status"] == "success":
-            store.balance -= int(amount)
-            store.save()
-        template = "store/withdrawalResponse.html"
-        context = {
-            "status": response["status"],
-            "message": response["message"]
-        }
-        return render(request, template, context)
-    else:
-        if store.currency == "GBP":
-            return HttpResponseRedirect(reverse("withdraw_uk"))
-        else:
-            url = f"https://api.flutterwave.com/v3/banks/{store.country}"
-            res = requests.get(url, headers = {"Authorization": FLUTTERWAVE_SEC_KEY})
-            response= json.loads(res.content)
-            bank_options = list(response["data"])
-            template = "store/initiateWithdrawal.html"
-            context = {
-                "bank_options": bank_options,
-                "currency": store.currency
-            }
-            return render(request, template, context)
-
+# THIS IS WHERE THE GHANAIAN WITHDRAWAL FORM IS FINALLY PROCESSED
 def branched(request):
-    store = request.user.store
+    user = request.user
+    model = request.user.dispatchrider
+    currency = model.store.currency
+    app = "dispatch"
     timestamp = int(datetime.now().timestamp())
+    reference = f"rider-{user.first_name}-{user.last_name}-withdrawal-{timestamp}"
     branch_code = request.POST.get("branch_code")
     bank_code = request.POST.get("bank_code")
     amount = request.POST.get("amount")
     account_number = request.POST.get("account_number")
-    data = {
-            "account_bank": bank_code,
-            "account_number": account_number,
-            "amount": amount,
-            "narration": "jumga store withdrawal",
-            "currency": store.currency,
-            "reference": f"{store.name}-withdrawal-{timestamp}",
-            "callback_url": "https://hooks.zapier.com/hooks/catch/9319455/o0es6km",
-            "destination_branch_code": branch_code,
-            "beneficiary_name": f"{request.user.first_name} {request.user.last_name}"
-        }
-    res = requests.post("https://api.flutterwave.com/v3/transfers", json=data, headers={"Authorization": FLUTTERWAVE_SEC_KEY})
-    response = json.loads(res.content)
-    print(response)
-    template = "store/withdrawalResponse.html"
-    if response["status"] == "success":
-        store.balance -= int(amount)
-        store.save()
-    context = {
-        "status": response["status"],
-        "message": response["message"]
-    }
-    return render(request, template, context)
+    beneficiary_name = f"{request.user.first_name} {request.user.last_name}"
+
+    withdrawal_request = Withdraw(request, model, app, currency, account_number=account_number, amount=amount, reference=reference, bank_code=bank_code, branch_code=branch_code, beneficiary_name=beneficiary_name)
+    return withdrawal_request.withdraw_ghs(run=True)
+
 
 
 def withdraw_uk(request):
-    store = request.user.store
+    user = request.user
+    model = user.dispatchrider
+    currency = model.store.currency
+    app = "dispatch"
     timestamp = int(datetime.now().timestamp())
+    reference = f"rider-{user.first_name}-{user.last_name}-withdrawal-{timestamp}"
+
+    
     if request.method == "POST":
         amount = int(request.POST.get("amount"))
-        data = {
-            "amount": amount,
-            "narration": "jumga store withdrawal",
-            "currency": "GBP",
-            "reference": f"{store.name}-withdrawal-{timestamp}",
-            "beneficiary_name": "John Twain",
-            "meta": [
-                {
-                "AccountNumber": request.POST.get("account_number"),
-                "RoutingNumber": request.POST.get("routing_number"), 
-                "BeneficiaryName": request.POST.get("beneficiary_name"),
-                "BeneficiaryCountry": "GB",
-                }
-            ]
-        }
-        res = requests.post("https://api.flutterwave.com/v3/transfers", json=data, headers={"Authorization": FLUTTERWAVE_SEC_KEY})
-        response = json.loads(res.content)
-        print(response)
-        if response["status"] == "success":
-            store.balance -= amount
-            store.save()
-        template = "store/withdrawalResponse.html"
-        context = {
-            "status": response["status"],
-            "message": response["message"]
-        }
-        return render(request, template, context)
+        account_number = request.POST.get("account_number")
+        routing_number = request.POST.get("routing_number")
+        currency = "GBP"
+        beneficiary_name = request.POST.get("beneficiary_name")
 
-    template = "store/withdrawUk.html"
-    context = {"store": store}
+        withdrawal_request = Withdraw(request, model, app, currency, account_number=account_number, amount=amount, reference=reference,  beneficiary_name=beneficiary_name, routing_number=routing_number)
+        
+        return withdrawal_request.withdraw_uk(run=True)
+
+    template = "dispatch/withdrawUk.html"
+    context = {"store": user}
     return render(request, template, context)

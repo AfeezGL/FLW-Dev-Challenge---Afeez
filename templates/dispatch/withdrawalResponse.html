@@ -1,8 +1,8 @@
 {% extends 'product/base.html' %}
 {% block body %}
-<div class="reciept ">
+<div class="reciept">
     <p><strong>Status: </strong> {{ status }}</p>
     <p><strong>Message: </strong> {{ message }}</p>
-    <a href="{% url 'dashboard' %}" class="proceed-btn">Dashboard</a>
+    <a href="{% url 'rider_dashboard' %}" class="proceed-btn">Dashboard</a>
 </div>
 {% endblock %}

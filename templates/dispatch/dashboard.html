@@ -1,7 +1,9 @@
 {% extends 'product/base.html' %}
 {% block body %}
+<div class="details">
     <div class="notifications">
         <p><strong>Balance: </strong>{{ rider.balance }}</p>
+        <a href="{% url 'rider_withdrawal' %}" class="proceed-btn">Withdraw funds</a>
         <div class="order-notification">
             <p>Current Tasks:</p>
             <hr>
@@ -11,10 +13,11 @@
     {% if length > 0 %}
         {% for order in deliveries %}
             <h2>{{ order.reference }}</h2>
-            <a href="{% url 'task_details' order.id %}">Details</a>
-            <a href="{% url 'task_update' order.id %}">Update</a>
+            <a href="{% url 'task_details' order.id %}" class="proceed-btn">Details</a>
+            <a href="{% url 'task_update' order.id %}" class="proceed-btn">Update</a>
         {% endfor %}
     {% else %}
         <h4>You do not have any active deliveries</h4>
     {% endif %}
+</div>
 {% endblock %}

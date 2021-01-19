@@ -1,0 +1,15 @@
+{% extends 'product/base.html' %}
+{% block body %}
+<form class="form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="amount">Amount</label>
+    <input type="number" name="amount">
+    <label for="beneficiary_name">Beneficiary name</label>
+    <input type="text" name="beneficiary_name">
+    <label for="account_number">Account number</label>
+    <input type="text", name="account_number">
+    <label for="routing_number">Routing number</label>
+    <input type="text" name="routing_number">
+	<button class="btn btn-success" type="submit">Submit</button>
+</form>
+{% endblock %}

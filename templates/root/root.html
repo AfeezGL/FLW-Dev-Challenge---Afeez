@@ -1,0 +1,16 @@
+{% extends 'product/base.html' %}
+{% block body %}
+	<div class="details">
+        <h3>Create a store with us and reach more customers</h3>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iste rerum atque ratione reprehenderit! Reiciendis eaque delectus asperiores nostrum provident quis sit corrupti officiis vero suscipit, quod laborum necessitatibus doloribus quam?</p>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos impedit corporis nesciunt dolorem reprehenderit, nisi in praesentium soluta quidem laudantium quisquam sequi tempora ex ipsam cupiditate placeat natus repellat obcaecati!</p>
+        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Totam laudantium a sint nam voluptatibus iure, fuga repellendus inventore id illo dolores repudiandae labore hic repellat quis voluptatum. Nesciunt, veniam perferendis!</p>
+        <a href="{% url 'create_store' %}" class="btn-success">Create a store</a>
+        <br>
+        <br>
+        <h3>Register as a Dispatch Rider</h3>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Iste rerum atque ratione reprehenderit! Reiciendis eaque delectus asperiores nostrum provident quis sit corrupti officiis vero suscipit, quod laborum necessitatibus doloribus quam?</p>
+        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dignissimos impedit corporis nesciunt dolorem reprehenderit, nisi in praesentium soluta quidem laudantium quisquam sequi tempora ex ipsam cupiditate placeat natus repellat obcaecati!</p>
+        <a href="{% url 'register_rider' %}" class="btn-success">Register</a>
+	</div>
+{% endblock %}

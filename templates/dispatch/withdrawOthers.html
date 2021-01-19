@@ -1,6 +1,6 @@
 {% extends 'product/base.html' %}
 {% block body %}
-<form class="form" method="post" action="{% url 'branched' %}" enctype="multipart/form-data">
+<form class="form" method="post" action="{% url 'dispatch_branched_withdrawal' %}" enctype="multipart/form-data">
 	{% csrf_token %}
     <label for="branch_code">Branch:</label>
     <select name="branch_code" id="branches">
@@ -13,6 +13,6 @@
     <input type="hidden" name="bank_code" value="{{ bank }}">
     <input type="hidden", name="account_number" value="{{ account_number }}">
     <input type="hidden" name="amount" value="{{ amount }}">
-	<button class="proceed-btn" type="submit">Submit</button>
+	<button class="btn btn-success" type="submit">Submit</button>
 </form>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends 'product/base.html' %}
 {% block body %}
+<div class="details">
 	<div class="cart-items">
 		<h4>cart-items</h4>
 		{% for cartitem in order.cartitem_set.all %}
@@ -21,4 +22,5 @@
 		</div>
 		<button class="btn btn-success" type="submit">Update Status</button>
 	</form>
+</div>
 {% endblock %}
