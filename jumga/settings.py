@@ -26,7 +26,7 @@ SECRET_KEY = 'gxmqod5qoejutvkgm$cd@4z)#%vk9cu6%!yd2at+s94gs%l1ur'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["flw-jumga.herokuapp.com", "127.0.0.0"]
 
 
 # Application definition
