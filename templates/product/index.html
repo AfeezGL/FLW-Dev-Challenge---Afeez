@@ -9,7 +9,7 @@
                 <img src="{{ product.image.url }}" alt="">
             </div>
             <p class="product-name">{{ product.name }}</p>
-            <p class="produc-price">₦<span>{{ product.price }}</span>.00</p>
+            <p class="produc-price">{{ product.store.currency }} <span>{{ product.price }}</span>.00</p>
         </a>
         <span class="btn">
             <button class = 'add-to-cart' data-product = '{{ product.id }}'>Add to cart</button>

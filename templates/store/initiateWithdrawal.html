@@ -1,0 +1,26 @@
+{% extends 'product/base.html' %}
+{% block body %}
+<form class="form" method="post" enctype="multipart/form-data">
+	{% csrf_token %}
+    <label for="bank">Bank:</label>
+    {% if currency == "GHS" %}
+    <select name="bank" id="banks">
+        {% for bank in bank_options %}
+        <option value="{{ bank.id }}">{{ bank.name }}</option>
+        {% endfor %}
+    </select>
+    {% else %}
+    <select name="bank" id="banks">
+        {% for bank in bank_options %}
+        <option value="{{ bank.code }}">{{ bank.name }}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
+    
+    <label for="accunt_number">Account number:</label>
+    <input type="number", name="account_number">
+    <label for="amount">Amount:</label>
+    <input type="number" name="amount">
+	<button class="btn btn-success" type="submit">Submit</button>
+</form>
+{% endblock %}

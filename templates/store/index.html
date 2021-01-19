@@ -1,6 +1,8 @@
 {% extends 'product/base.html' %}
 {% block body %}
 	<div class="notifications">
+		<p>balance = {{ store.currency }} {{ store.balance }}</p>
+		<a href="{% url 'product_list' store.slug %}">View store</a>
 		<div class="order-notification">
 			<a href="{% url 'pending_orders' %}">
 				<p>New Orders:</p>

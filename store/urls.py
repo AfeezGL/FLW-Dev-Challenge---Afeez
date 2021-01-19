@@ -13,5 +13,8 @@ urlpatterns = [
     path('verify_payment', views.VerifyPayment, name="payment_verify"),
     path('create/product/', views.CreateProduct.as_view(), name="create_product"),
     path('update/product/<int:pk>/', views.UpdateProduct.as_view(), name="update_product"),
+    path('dashboard/withdraw/', views.Withdraw, name="withdraw"),
+    path('withdraw/branched/', views.branched, name="branched"),
+    path('withdraw/uk/', views.withdraw_uk, name="withdraw_uk"),
     path('update/', views.UpdateStore.as_view(), name="update_store")
 ]

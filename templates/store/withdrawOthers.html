@@ -1,0 +1,18 @@
+{% extends 'product/base.html' %}
+{% block body %}
+<form class="form" method="post" action="{% url 'branched' %}" enctype="multipart/form-data">
+	{% csrf_token %}
+    <label for="branch_code">Branch:</label>
+    <select name="branch_code" id="branches">
+        {% for branch in branch_choices %}
+        <option value="{{ branch.branch_code }}">{{ branch.branch_name }}</option>
+        {% endfor %}
+    </select>
+    <label for="beneficiary_name">Beneficiary name:</label>
+    <input type="text" name="beneficiary_name">
+    <input type="number" name="bank_code" value="{{ bank }}">
+    <input type="number", name="account_number" value="{{ account_number }}">
+    <input type="number" name="amount" value="{{ amount }}">
+	<button class="btn btn-success" type="submit">Submit</button>
+</form>
+{% endblock %}

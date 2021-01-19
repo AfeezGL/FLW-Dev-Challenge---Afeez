@@ -92,19 +92,19 @@ def InitializePaymentView(request, slug):
 
     try:
         email = request.user.email
-        phone_number = request.user.phone_number
+        phone_number = str(request.user.phone_number)
         name = f"{request.user.first_name} {request.user.last_name}"
     except:
         email = order.address.email
-        phone_number = order.address.phone_number
+        phone_number = str(order.address.phone_number)
         name = f"{order.address.first_name} {order.address.last_name}"
     
     redirect_url = f"{BASE_URL}{reverse('verify')}"
 
     data = {
         "tx_ref": f"{order.transaction_id}",
-        "amount": f"{order.total}",
-        "currency": "NGN",
+        "amount": f"{order.details.net_total}",
+        "currency": order.store.currency,
         "redirect_url": redirect_url,
         "payment_options": "card",
         "meta": {
@@ -130,20 +130,37 @@ def InitializePaymentView(request, slug):
 
 
 def VerifyPaymentView(request):
-    tx_ref = request.GET['tx_ref']
-    fl_tx_ref = request.GET['transaction_id']
-    order = Order.objects.get(transaction_id = tx_ref)
-    url = f"https://api.flutterwave.com/v3/transactions/{fl_tx_ref}/verify"
-    res = requests.get(url, headers={"Authorization": FLUTTERWAVE_SEC_KEY})
-    content = json.loads(res.content)
-    message = content["status"]
+    try:
+        tx_ref = request.GET['tx_ref']
+    except:
+        tx_ref = None
+    
+    try:
+        fl_tx_ref = request.GET['transaction_id']
+    except:
+        fl_tx_ref = None
+    
+    try:
+        status = request.GET['status']
+    except:
+        status = None
+    if status == "successful":
+        order = Order.objects.get(transaction_id = tx_ref)
+        url = f"https://api.flutterwave.com/v3/transactions/{fl_tx_ref}/verify"
+        res = requests.get(url, headers={"Authorization": FLUTTERWAVE_SEC_KEY})
+        content = json.loads(res.content)
+        message = content["status"]
 
-    if res.ok and message == "success":
-        if order.completed:
-            pass
+        if res.ok and message == "success":
+            if order.completed:
+                pass
+            else:
+                order.completed = True
+                order.save()
+                store = order.store
+                store.balance += order.details.store_total
+                store.save()
         else:
-            order.completed = True
-            order.save()
-    else:
-        message = "Operation failed"
-    return HttpResponse(message)
+            message = "status"
+        return HttpResponse(message)
+    return HttpResponse(status)

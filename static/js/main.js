@@ -87,6 +87,7 @@ for (var i = 0; i < increaseBtn.length; i++) {
 			body: JSON.stringify({
 				'productId': productId,
 				'deviceId': deviceId,
+				'storeId': store_id
 			})
 		})
 		.then((res) => {
@@ -114,6 +115,7 @@ for (var i = 0; i < reduceBtn.length; i++) {
 			body: JSON.stringify({
 				'productId': productId,
 				'deviceId': deviceId,
+				'storeId': store_id
 			})
 		})
 		.then((res) => {

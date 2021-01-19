@@ -8,7 +8,7 @@
         </div>
         <div class="purchase">
             <p class="product-name">{{ product.name }}</p>
-            <p class="details-price">₦<span>{{ product.price }}</span>.00</p>
+            <p class="details-price">{{ product.store.currency }} <span>{{ product.price }}</span>.00</p>
             <button class = 'add-to-cart' data-product = '{{ product.id }}'>Add to cart</button>
         </div>
     </div>
@@ -17,6 +17,15 @@
         <h4>Product Description</h4>
         {{ product.description }}
     </div>
+</div>
+<div class="cart-link">
+    <a href="{% url 'cart' product.store.slug %}">
+        <div class="cart-icon" style="background-image: url('{% static 'css/supermarket.svg' %}');">
+            <div class="carttext">
+                <h2 class="num"></h2>
+            </div>
+        </div>
+    </a>
 </div>
 <script type="text/javascript" charset="utf-8">
   var user = '{{ request.user }}'

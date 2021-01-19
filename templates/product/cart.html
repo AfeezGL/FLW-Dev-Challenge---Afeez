@@ -15,7 +15,7 @@
                     <span>{{ cartitem.units }}</span> units
                     <button class="increase" data-product = '{{ cartitem.product.id }}'>+</button>
                 </div>
-                <h4 class="price">₦{{ cartitem.get_price }}</h4>
+                <h4 class="price">{{ cartitem.product.store.currency }} {{ cartitem.get_price }}</h4>
             </div>
         </div>
         {% endfor %}
@@ -25,4 +25,7 @@
         <button class = 'proceed-btn'>Proceed to checkout</button>
     </a>
 </div>
+<script>
+    var store_id = {{ order.store.id }}
+</script>
 {% endblock %} 

@@ -60,6 +60,7 @@ def reduce_units(request):
 	data = json.loads(request.body)
 	product_id = data["productId"]
 	device_id = data["deviceId"]
+	store_id = data["storeId"]
 	product = Product.objects.get(id = product_id)
 	try:
 		customer = Customer.objects.get(user = request.user)
@@ -74,7 +75,7 @@ def reduce_units(request):
 	else:
 		cartitem.delete()
 		units = 0
-	total = order.total
+	total = order.cart_total
 	res = {
 		"total":total,
 		"units":units

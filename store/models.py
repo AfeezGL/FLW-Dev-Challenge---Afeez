@@ -5,6 +5,19 @@ from autoslug import AutoSlugField
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext_lazy as _
 
+
+class CountryChoices(models.TextChoices):
+	NIGERIA = 'NG', _('Nigeria')
+	GHANA = 'GH', _('Ghana')
+	KENYA = 'KE', _('Kenya')
+	UK = 'UK', _('United Kingdom')
+
+class CurrencyChoices(models.TextChoices):
+	NIGEIRA = 'NGN', _('Nigerian naira')
+	GHANA = 'GHS', _('Ghana')
+	KENYA = 'KES', _('Kenya')
+	UK = 'GBP', _('United Kingdom')
+
 class Store(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	name = models.CharField(max_length=100)
@@ -15,8 +28,9 @@ class Store(models.Model):
 	address_line_2 = models.CharField(max_length=200, null=True, blank=True)
 	city = models.CharField(max_length=50, null=True)
 	state = models.CharField(max_length=50, null=True)
-	bank_name = models.CharField(max_length=200)
-	account_number = models.CharField(max_length=10)
+	country = models.CharField(max_length=2, choices=CountryChoices.choices, default=CountryChoices.NIGERIA)
+	currency = models.CharField(max_length=3, choices=CurrencyChoices.choices, default=CurrencyChoices.NIGEIRA)
+	balance = models.IntegerField(default=0)
 	is_active = models.BooleanField(default=False)
 	slug = AutoSlugField(populate_from='name')
 

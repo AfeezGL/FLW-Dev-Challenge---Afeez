@@ -5,7 +5,7 @@ from django.forms import ModelForm
 class CreateStoreForm(ModelForm):
     class Meta:
         model = Store
-        fields = ["name", "description", "phone_number", "bank_name", "account_number"]
+        fields = ["name", "description", "email", "phone_number", "country", "currency"]
 
 class AddProductForm(ModelForm):
     class Meta:
