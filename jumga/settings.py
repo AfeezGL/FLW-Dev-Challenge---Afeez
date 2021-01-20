@@ -79,11 +79,11 @@ TEMPLATES = [
 
 # CUSTOM AUTHENTICATION SETTINGS
 AUTH_USER_MODEL = 'account.User'
-LOGIN_REDIRECT_URL = 'index'
-LOGOUT_REDIRECT_URL = 'index'
+LOGIN_REDIRECT_URL = 'root'
+LOGOUT_REDIRECT_URL = 'root'
 LOGIN_URL = 'login'
 FLUTTERWAVE_SEC_KEY = os.environ.get('FLUTTERWAVE_SEC_KEY')
-BASE_URL = "https://flw-jumga.herokuapp.com/"
+BASE_URL = "https://flw-jumga.herokuapp.com"
 
 WSGI_APPLICATION = 'jumga.wsgi.application'
 
